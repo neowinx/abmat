@@ -24,12 +24,40 @@ Scrap
     Wait Until Element Is Visible  xpath://*[@id="wrap"]/aside/div/label/h4/span[text()="Material"]
     Click Element  xpath://*[@id="wrap"]/aside/div/label/h4/span[text()="Material"]
     # Wait a little for accordion animation to complete
-    Sleep  3 seconds
-    ${lista}=  Get WebElements  xpath://*[@id="wrap"]/aside/div/label/ul/li[@data-main="25"]
-    :FOR    ${element}  IN  @{lista}
-#        ${sub}=  Get Element Attribute  ${element}  data-sub
-#        ${xpathForClic}=  Catenate  SEPARATOR=  //*[@id="wrap"]/aside/div/label/ul/li[@data-main="25"][@data-sub="  ${sub}  "]
-#        Click Element  ${xpathForClic}
-        Click Element   ${element}
-        Sleep  10 seconds
+    Sleep  5 seconds
+    ${subcategories_elements}=  Get WebElements  xpath://*[@id="wrap"]/aside/div/label/ul/li[@data-main="25"]
+    ${subcategories}=  Create List
+    :FOR  ${subel}  IN  ${subcategories_elements}
+        ${sub}=  Get Attribute  ${subel}  data-sub
+        Append To List  ${subcategories}  ${sub}
+    END
+    Iterate over subcategories  @{subcategories}
+
+Iterate over subcategories
+    [Arguments]  @{subcategories}
+    :FOR  ${sub}  IN  @{subcategories}
+        ${xpathsub}=  Catenate  SEPARATOR=  //*[@id="wrap"]/aside/div/label/ul/li[@data-main="25"][@data-sub="  ${sub}  "]
+        Click Element  ${xpathsub}
+        # Wait a little for accordion animation to complete
+        Sleep  3 seconds
+        ${marketitems}=  Get WebElements  xpath://*[@id="market"]/div
+        Iterate over items  @{marketitems}
+    END
+
+Iterate over items
+    [Arguments]  @{marketitems}
+    :FOR  ${mki}  IN  @{marketitems}
+        Log  ${mki}
+        Click Element  ${mki}
+        # Wait a little for accordion animation to complete
+        Sleep  3 seconds
+        Click button  css:.btnArrowLeft
+        # Wait a little for accordion animation to complete
+        Sleep  3 seconds
+#            Click Element  css:#btnBuy
+#            # Wait a little for animation to complete
+#            Sleep  3 seconds
+#            Click Element  css:#btnCancel
+#            # Wait a little for animation to complete
+#            Sleep  3 seconds
     END
